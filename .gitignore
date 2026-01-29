@@ -1,0 +1,7 @@
+# py cache
+__pycache__/
+# virtual environment
+venv/
+env/
+# database file
+fraud.db
