@@ -19,9 +19,9 @@ def generate_sample_transactions(db, days=30):
     user_ids = [f"user_{i:03d}" for i in range(1, 11)]
     
     # Normal transactions
-    for _ in range(100):
+    for _ in range(10):
         user_id = random.choice(user_ids)
-        amount = random.uniform(10, 5000)
+        amount = random.uniform(10, 50)
         recipient = random.choice([u for u in user_ids if u != user_id])
         
         transaction_id = str(uuid.uuid4())[:8]
@@ -31,8 +31,8 @@ def generate_sample_transactions(db, days=30):
     db.add_transaction("SUSP001", "user_001", 15000, "user_002")  # Should trigger Rule 1
     
     # Suspicious: Rapid transactions (Rule 2)
-    for i in range(6):
-        db.add_transaction(f"RAPID{i}", "user_003", 50, f"user_{random.randint(4,10):03d}")
+    # for i in range(6):
+    #     db.add_transaction(f"RAPID{i}", "user_003", 50, f"user_{random.randint(4,10):03d}")
     
     # Suspicious: Test pattern (Rule 4)
     db.add_transaction("TEST1", "user_004", 0.99, "user_005")

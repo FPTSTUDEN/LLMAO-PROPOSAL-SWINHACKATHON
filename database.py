@@ -89,19 +89,53 @@ class SimpleDatabase:
         cursor.execute('SELECT * FROM users WHERE user_id = ?', (user_id,))
         return cursor.fetchone()
     
-    def get_user_transactions(self, user_id, hours=24):
+    def get_user_transactions(self, user_id, hours=0):
+        if hours == 0:
+            cursor = self.conn.cursor()
+            cursor.execute('''
+            SELECT COUNT(*), SUM(amount) 
+            FROM transactions 
+            WHERE user_id = ?
+            ''', (user_id,))
+            return cursor.fetchone()
         cursor = self.conn.cursor()
         cursor.execute('''
         SELECT COUNT(*), SUM(amount) 
         FROM transactions 
         WHERE user_id = ? AND timestamp > datetime('now', ?)
         ''', (user_id, f'-{hours} hours'))
+        # AND timestamp > datetime('now', ?) means within the last 'hours' hours
         return cursor.fetchone()
     def get_all_transactions(self):
         cursor = self.conn.cursor()
         cursor.execute('SELECT * FROM transactions')
         return cursor.fetchall()
-    
+    def get_user_context(self, user_id):
+        user_info = self.get_user_info(user_id)
+        if not user_info:
+            return {}
+        
+        account_age_days = (datetime.now() - datetime.fromisoformat(user_info[3])).days
+        
+        transactions_count, transactions_sum = self.get_user_transactions(user_id)
+        transactions_count = transactions_count or 0
+        transactions_sum = transactions_sum or 0.0
+
+        transactions_count_24h, transactions_sum_24h = self.get_user_transactions(user_id, hours=24)
+        transactions_count_24h = transactions_count_24h or 0
+        transactions_sum_24h = transactions_sum_24h or 0.0
+        
+        context = {
+            "user_id": user_id,
+            "account_age_days": account_age_days,
+            "risk_score": user_info[5],
+            "recent_transactions_count": transactions_count,
+            "recent_transactions_sum": transactions_sum,
+            "transactions_count_24h": transactions_count_24h,
+            "transactions_sum_24h": transactions_sum_24h
+        }
+        
+        return context
     def close(self):
         self.conn.close()
 

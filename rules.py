@@ -18,52 +18,52 @@ Rule_list=[
     Rule(
         rule_id="R002",
         name="Rapid Transaction Spam",
-        description="More than 5 transactions in last hour",
+        description="More than 3 transactions in 24 hours exceeding $5,000 total",
         conditions=[
-            Condition("transactions_last_hour", ">", 5),
-            Condition("avg_amount", "<", 100)
+            Condition("transactions_count_24h", ">", 3),
+            Condition("transactions_sum_24h", ">", 5000)
         ],
         actions=["limit_velocity", "alert_user"],
         severity="medium",
         score=30
     ),
-    Rule(
-        rule_id="R003",
-        name="Geographic Hopping",
-        description="Transactions from multiple countries in short time",
-        conditions=[
-            Condition("country_changes_last_24h", ">=", 3),
-            Condition("account_age_days", ">", 30)  # Not new users
-        ],
-        actions=["require_mfa", "flag_account"],
-        severity="high",
-        score=50
-    ),
+    # Rule(
+    #     rule_id="R003",
+    #     name="Geographic Hopping",
+    #     description="Transactions from multiple countries in short time",
+    #     conditions=[
+    #         Condition("country_changes_last_24h", ">=", 3),
+    #         Condition("account_age_days", ">", 30)  # Not new users
+    #     ],
+    #     actions=["require_mfa", "flag_account"],
+    #     severity="high",
+    #     score=50
+    # ),
     Rule(
         rule_id="R004",
         name="Test Transaction Pattern",
         description="Multiple small transactions before large one",
         conditions=[
-            Condition("small_transactions_last_hour", ">=", 3),
-            Condition("amount", ">", 5000)
+            Condition("transactions_count_24h", ">=", 5),
+            Condition("amount", ">", 1000)
         ],
         actions=["hold_transaction", "investigate"],
         severity="medium",
         score=35
-    ),
-    Rule(
-        rule_id="R005",
-        name="Unusual Transaction Time",
-        description="Large transaction at unusual hour (2AM-5AM)",
-        conditions=[
-            Condition("hour_of_day", ">=", 2),
-            Condition("hour_of_day", "<=", 5),
-            Condition("amount", ">", 2000)
-        ],
-        actions=["alert_user", "monitor"],
-        severity="low",
-        score=20
     )
+    # Rule(
+    #     rule_id="R005",
+    #     name="Unusual Transaction Time",
+    #     description="Large transaction at unusual hour (2AM-5AM)",
+    #     conditions=[
+    #         Condition("hour_of_day", ">=", 2),
+    #         Condition("hour_of_day", "<=", 5),
+    #         Condition("amount", ">", 2000)
+    #     ],
+    #     actions=["alert_user", "monitor"],
+    #     severity="low",
+    #     score=20
+    # )
 ]
 
 class RuleManager:

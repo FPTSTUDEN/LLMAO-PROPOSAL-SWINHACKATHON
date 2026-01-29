@@ -12,25 +12,28 @@ class Condition:
     def check(self, data: Dict[str, Any]) -> bool:
         """Check if condition is true for given data"""
         actual_value = data.get(self.field)
-        
-        if self.operator == ">":
-            return actual_value > self.value
-        elif self.operator == "<":
-            return actual_value < self.value
-        elif self.operator == ">=":
-            return actual_value >= self.value
-        elif self.operator == "<=":
-            return actual_value <= self.value
-        elif self.operator == "==":
-            return actual_value == self.value
-        elif self.operator == "!=":
-            return actual_value != self.value
-        elif self.operator == "in":
-            return actual_value in self.value
-        elif self.operator == "not in":
-            return actual_value not in self.value
-        elif self.operator == "contains":
-            return str(self.value) in str(actual_value)
+        try:
+            if self.operator == ">":
+                return actual_value > self.value
+            elif self.operator == "<":
+                return actual_value < self.value
+            elif self.operator == ">=":
+                return actual_value >= self.value
+            elif self.operator == "<=":
+                return actual_value <= self.value
+            elif self.operator == "==":
+                return actual_value == self.value
+            elif self.operator == "!=":
+                return actual_value != self.value
+            elif self.operator == "in":
+                return actual_value in self.value
+            elif self.operator == "not in":
+                return actual_value not in self.value
+            elif self.operator == "contains":
+                return str(self.value) in str(actual_value)
+        except Exception as e:
+            print(f"Error checking condition: {e}")
+            print(data)
         return False
 
 @dataclass
