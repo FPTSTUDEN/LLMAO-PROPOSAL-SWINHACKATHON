@@ -38,7 +38,7 @@ class SimpleFraudDetector(FraudDetector):
             if result["fraud_score"] > 0:
                 self.print_result(result)
 
-        self.db.close()
+        # self.db.close()
 
 
 if __name__ == "__main__":
@@ -49,3 +49,4 @@ if __name__ == "__main__":
     
     # Uncomment to run interactive mode
     interactive_mode(detector)
+    detector.db.close()
